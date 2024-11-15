@@ -1,0 +1,40 @@
+{{> layout/header}}
+
+<div class="row mb-3">
+    <div class="col">
+        <h2>게시글 목록</h2>
+    </div>
+    <div class="col text-end">
+        <a href="/board/write" class="btn btn-primary">글쓰기</a>
+    </div>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th width="10%">번호</th>
+            <th width="40%">제목</th>
+            <th width="15%">작성자</th>
+            <th width="15%">작성일</th>
+            <th width="10%">조회수</th>
+        </tr>
+    </thead>
+    <tbody>
+    {{#boards}}
+        <tr>
+            <td>{{id}}</td>
+            <td><a href="/board/{{id}}" class="text-decoration-none">{{title}}</a></td>
+            <td>{{author}}</td>
+            <td>{{createdAt}}</td>
+            <td>{{viewCount}}</td>
+        </tr>
+    {{/boards}}
+    {{^boards}}
+        <tr>
+            <td colspan="5" class="text-center">게시글이 없습니다.</td>
+        </tr>
+    {{/boards}}
+    </tbody>
+</table>
+
+{{> layout/footer}}

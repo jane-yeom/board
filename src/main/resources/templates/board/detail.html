@@ -1,0 +1,101 @@
+{{> layout/header}}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3>{{board.title}}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <strong>작성자:</strong> {{board.author}}
+                </div>
+                <div class="col-md-3">
+                    <strong>조회수:</strong> {{board.viewCount}}
+                </div>
+                <div class="col-md-3">
+                    <strong>작성일:</strong> {{board.createdAt}}
+                </div>
+                <div class="col-md-3">
+                    <strong>수정일:</strong> {{board.updatedAt}}
+                </div>
+            </div>
+            
+            <hr>
+            
+            <!-- 내용 -->
+            <div class="mb-4">
+                <div style="min-height: 200px; white-space: pre-wrap;">{{board.content}}</div>
+            </div>
+            
+            <!-- 첨부파일 목록 -->
+            {{#files}}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="mb-0">첨부파일</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                    {{#files}}
+                        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-paperclip me-2"></i>
+                                <span>{{originalFilename}}</span>
+                                <small class="text-muted ms-2">({{formatFileSize fileSize}})</small>
+                            </div>
+                            <div>
+                                <a href="/board/file/{{id}}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-download"></i> 다운로드
+                                </a>
+                                {{#isAuthor}}
+                                <button onclick="deleteFile({{id}})" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {{/isAuthor}}
+                            </div>
+                        </div>
+                    {{/files}}
+                    </div>
+                </div>
+            </div>
+            {{/files}}
+            
+            <!-- 버튼 -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/board/{{board.id}}/edit" class="btn btn-primary me-md-2">수정</a>
+                <form action="/board/{{board.id}}/delete" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger me-md-2" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+                </form>
+                <a href="/board/list" class="btn btn-secondary">목록</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteFile(fileId){
+        if(confirm('파일을 삭제하시겠습니까?')){
+            fetch(`/board/file/${fileId}`,{
+                method : 'DELETE',
+            }).then(response => {
+                if(response.ok){
+                    location.reload();
+
+                }else {
+                    alert('파일 삭제 실패');
+
+                }
+
+            });
+
+        }
+
+    }
+        function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+</script>
+{{> layout/footer}}
