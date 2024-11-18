@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            background-color: #fff;
+        }
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        .password-input-group {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            border: none;
+            background: none;
+            color: #6c757d;
+        }
+        .requirements {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .form-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="form-container">
+            <h2 class="form-title">회원가입</h2>
+
+            {{#error}}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{error}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {{/error}}
+
+            <form action="/register" method="post" onsubmit="return validateForm()">
+                <!-- 아이디 입력 -->
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" name="username"
+                           placeholder="아이디" required minlength="4">
+                    <label for="username">아이디</label>
+                    <div class="requirements text-muted">
+                        <i class="bi bi-info-circle"></i> 4자 이상의 영문, 숫자 조합
+                    </div>
+                </div>
+
+                <!-- 비밀번호 입력 -->
+                <div class="form-floating mb-3 password-input-group">
+                    <input type="password" class="form-control" id="password" name="password"
+                           placeholder="비밀번호" required minlength="8">
+                    <label for="password">비밀번호</label>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <div class="requirements text-muted">
+                        <i class="bi bi-info-circle"></i> 8자 이상의 영문, 숫자, 특수문자 조합
+                    </div>
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div class="form-floating mb-3 password-input-group">
+                    <input type="password" class="form-control" id="confirmPassword"
+                           placeholder="비밀번호 확인" required>
+                    <label for="confirmPassword">비밀번호 확인</label>
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+
+                <!-- 이름 입력 -->
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="name" name="name"
+                           placeholder="이름" required>
+                    <label for="name">이름</label>
+                </div>
+
+                <!-- 이메일 입력 -->
+                <div class="form-floating mb-4">
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="name@example.com" required>
+                    <label for="email">이메일</label>
+                </div>
+
+                <!-- 회원가입 버튼 -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus"></i> 가입하기
+                    </button>
+                </div>
+
+                <!-- 로그인 링크 -->
+                <div class="text-center mt-3">
+                    <span class="text-muted">이미 계정이 있으신가요?</span>
+                    <a href="/login" class="text-decoration-none">로그인</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const username = document.getElementById('username').value;
+
+        // 아이디 유효성 검사
+        if (!/^[a-zA-Z0-9]{4,}$/.test(username)) {
+            showAlert('아이디는 4자 이상의 영문과 숫자 조합이어야 합니다.');
+            return false;
+        }
+
+        // 비밀번호 유효성 검사
+        if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(password)) {
+            showAlert('비밀번호는 8자 이상의 영문, 숫자, 특수문자 조합이어야 합니다.');
+            return false;
+        }
+
+        // 비밀번호 확인
+        if (password !== confirmPassword) {
+            showAlert('비밀번호가 일치하지 않습니다.');
+            return false;
+        }
+
+        return true;
+    }
+
+    function showAlert(message) {
+        const alertHtml = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        document.querySelector('.form-title').insertAdjacentHTML('afterend', alertHtml);
+    }
+
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.parentElement.querySelector('.password-toggle i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+
+    // 페이지 로드 시 이전 알림 제거
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            new bootstrap.Alert(alert);
+        });
+    });
+    </script>
+</body>
+</html>

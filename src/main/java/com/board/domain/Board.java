@@ -12,4 +12,5 @@ public class Board {
     private int viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String email;
 }
