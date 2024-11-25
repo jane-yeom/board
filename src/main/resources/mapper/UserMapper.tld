@@ -20,16 +20,18 @@
             username,
             password,
             email,
-            name,
+            phone,
             created_at,
-            use_yn
+            use_yn,
+            password
         ) VALUES (
             #{username},
             #{password},
             #{email},
-            #{name},
+            #{phone},
             NOW(),
-            #{useYn}
+            'Y',
+            #{password}
         )
     </insert>
 
@@ -40,7 +42,7 @@
             username,
             password,
             email,
-            name,
+            phone,
             created_at,
             use_yn
         FROM users
@@ -54,9 +56,9 @@
             username,
             password,
             email,
-            name,
+            phone,
             created_at,
-            enabled
+            use_yn
         FROM users
         WHERE email = #{email}
     </select>
@@ -64,7 +66,7 @@
     <!-- 회원 활성화 -->
     <update id="enable" parameterType="Long">
         UPDATE users
-        SET enabled = true
+        SET use_yn = 'Y'
         WHERE id = #{id}
     </update>
 
@@ -74,8 +76,8 @@
         SET
             password = #{password},
             email = #{email},
-            name = #{name},
-            enabled = #{enabled}
+            username = #{username},
+            use_yn = #{useYn}
         WHERE id = #{id}
     </update>
 

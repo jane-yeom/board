@@ -62,7 +62,7 @@
                            placeholder="아이디" required minlength="4">
                     <label for="username">아이디</label>
                     <div class="requirements text-muted">
-                        <i class="bi bi-info-circle"></i> 4자 이상의 영문, 숫자 조합
+                        <i class="bi bi-info-circle"></i> 4자 이상의 영문
                     </div>
                 </div>
 
@@ -75,7 +75,7 @@
                         <i class="bi bi-eye"></i>
                     </button>
                     <div class="requirements text-muted">
-                        <i class="bi bi-info-circle"></i> 8자 이상의 영문, 숫자, 특수문자 조합
+                        <i class="bi bi-info-circle"></i> 4자 이상의 영문
                     </div>
                 </div>
 
@@ -126,19 +126,6 @@
     function validateForm() {
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
-        const username = document.getElementById('username').value;
-
-        // 아이디 유효성 검사
-        if (!/^[a-zA-Z0-9]{4,}$/.test(username)) {
-            showAlert('아이디는 4자 이상의 영문과 숫자 조합이어야 합니다.');
-            return false;
-        }
-
-        // 비밀번호 유효성 검사
-        if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(password)) {
-            showAlert('비밀번호는 8자 이상의 영문, 숫자, 특수문자 조합이어야 합니다.');
-            return false;
-        }
 
         // 비밀번호 확인
         if (password !== confirmPassword) {
