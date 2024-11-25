@@ -2,14 +2,11 @@ package com.board.controller;
 
 import com.board.domain.User;
 import com.board.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +35,7 @@ public class UserController {
             //세션에 사용자 정보 저장
             session.setAttribute("user", user);
             session.setAttribute("username", user.getUsername());
-            return "redirect:/";
+            return "redirect:/board/list";
         } else {
             model.addAttribute("error","아이디 또는 비밀번호가 올바르지 않습니다.");
             return "login";

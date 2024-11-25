@@ -12,5 +12,5 @@ public interface UserMapper {
 
     User findByEmail(String email);
 
-    void useYn(Long id);
+    void enable(Long id);
 }

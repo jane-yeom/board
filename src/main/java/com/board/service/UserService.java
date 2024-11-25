@@ -34,7 +34,7 @@ public class UserService {
         // 비밀번호 암호화
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        user.setUserYn(true);
+        user.setUserYn("Y");
 
         userMapper.save(user);
         return true;
