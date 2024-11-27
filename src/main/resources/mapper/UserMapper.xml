@@ -41,9 +41,9 @@
             password,
             email,
             phone,
-            created_at,
-            use_yn
-        FROM users
+            use_yn as useYn,
+            created_at
+        FROM users as createdAt
         WHERE username = #{username}
     </select>
 
