@@ -16,8 +16,16 @@ public class BoardService {
 
     private EmailService emailService;
     
-    public List<Board> getAllBoards() {
-        return boardMapper.findAll();
+    public List<Board> findAll(int page, int size) {
+
+        int offset = (page -1) * size;
+        return boardMapper.findAll(offset, size);
+    }
+
+    public int getTotalPages(int size){
+        int totalCount = boardMapper.count();
+        return (totalCount + size -1) / size;
+
     }
     
     public Board getBoard(Long id) {
@@ -26,8 +34,9 @@ public class BoardService {
     }
     
     @Transactional
-    public void saveBoard(Board board) {
+    public Long saveBoard(Board board) {
         boardMapper.insert(board);
+        return board.getId();
     }
     
     @Transactional
@@ -40,28 +49,5 @@ public class BoardService {
         boardMapper.delete(id);
     }
 
-    public void createPost(Board board) {
-        boardMapper.insert(board);
 
-        // 게시글 작성 확인 메일 발송
-        try {
-            String emailContent = String.format(
-                "<div style='margin:20px;'>" +
-                "<h2>게시글이 성공적으로 등록되었습니다.</h2>" +
-                "<p>제목: %s</p>" +
-                "<p>작성자: %s</p>" +
-                "<a href='http://localhost:8080/board/%d' style='padding:10px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;'>" +
-                "게시글 보기</a>" +
-                "</div>",
-                board.getTitle(),
-                board.getAuthor(),
-                board.getId()
-            );
-
-            emailService.sendEmail(board.getEmail(), "게시글 등록 알림", emailContent);
-        } catch (Exception e) {
-            // 이메일 발송 실패는 게시글 등록에 영향을 주지 않도록 처리
-            e.printStackTrace();
-        }
-    }
 }

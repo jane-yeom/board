@@ -1,6 +1,7 @@
 package com.board.service;
 
 import com.board.domain.FileAttachment;
+import com.board.mapper.BoardMapper;
 import com.board.mapper.FileMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ public class FileService {
     private String uploadPath;
 
     private final FileMapper fileMapper;
+    private final BoardMapper boardMapper;
 
     @Transactional
     public void saveFiles(Long boardId, List<MultipartFile> files) throws IOException {

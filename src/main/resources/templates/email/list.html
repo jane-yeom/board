@@ -1,0 +1,33 @@
+{{>layout/header}}
+
+<div class="row mb-3">
+  <div class="col">
+    <h2>이메일 발송 내역</h2>
+  </div>
+  <div class="col text-end">
+    <a href="/email/send" class="btn btn-primary">이메일 보내기</a>
+  </div>
+</div>
+
+<table class="table table-hover">
+  <thead>
+  <tr>
+    <th>받는사람</th>
+    <th>제목</th>
+    <th>발송시간</th>
+    <th>상태</th>
+  </tr>
+  </thead>
+  <tbody>
+    {{#emails}}
+    <tr>
+      <td>{{receiver}}</td>
+      <td>{{subject}}</td>
+      <td>{{sentAt}}</td>
+      <td>{{status}}</td>
+    </tr>
+  {{/emails}}
+  </tbody>
+</table>
+
+{{>layout/footer}}

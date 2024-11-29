@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.board.mapper.EmailMapper">
+    <insert id="save" parameterType="com.board.domain.Email">
+        INSERT INTO emails (
+            sender,
+            receiver,
+            subject,
+            content,
+            sent_at,
+            status
+        ) VALUES (
+            #{sender},
+            #{receiver},
+            #{subject},
+            #{content},
+            NOW(),
+            #{status}
+        )
+    </insert>
+    
+    <select id="findAll" resultType="com.board.domain.Email">
+        SELECT id,
+               sender,
+               receiver,
+               subject,
+               content,
+               sent_at as sentAt,
+               status
+        FROM emails
+        ORDER BY sent_at DESC
+    </select>
+
+    <select id="findById" resultType="com.board.domain.Email">
+        SELECT
+            id,
+               sender,
+               receiver,
+               subject,
+               content,
+               sent_at as sentAt,
+               status
+        FROM emails
+        WHERE id = #{id}
+    </select>
+</mapper>

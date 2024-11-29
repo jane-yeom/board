@@ -13,6 +13,7 @@
             updated_at as updatedAt
         FROM board
         ORDER BY id DESC
+        LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="findById" parameterType="Long" resultType="com.board.domain.Board">
@@ -28,7 +29,7 @@
         WHERE id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.board.domain.Board">
+    <insert id="insert" parameterType="com.board.domain.Board" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO board (
             title,
             content,
@@ -65,5 +66,9 @@
         SET view_count = view_count + 1
         WHERE id = #{id}
     </update>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM board
+    </select>
 
 </mapper>

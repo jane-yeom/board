@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,8 +35,33 @@ public class BoardController {
     private String uploadPath;
     
     @GetMapping("/list")
-    public String list(Model model) {
-        model.addAttribute("boards", boardService.getAllBoards());
+    public String list(@RequestParam(defaultValue = "1" )int page,
+                       @RequestParam(defaultValue = "10") int size,
+                         Model model) {
+          List<Board> boards = boardService.findAll(page, size);
+        int totalPages = boardService.getTotalPages(size);
+
+        // 페이지 번호 범위 계산
+        List<Integer> pageNumbers = new ArrayList<>();
+
+        // 10개 단위로 페이지 네비게이션을 표시
+        int startPage = (int) Math.floor((page - 1) / 10) * 10 + 1; // 시작 페이지 (현재 페이지를 기준으로 10개 단위)
+        int endPage = Math.min(startPage + 9, totalPages); // 끝 페이지 (10페이지 범위로 제한)
+
+        // 10개 페이지를 추가
+        for (int i = startPage; i <= endPage; i++) {
+            pageNumbers.add(i);
+        }
+
+       // 모델에 데이터 추가
+        model.addAttribute("boards", boards);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pages", pageNumbers);
+        model.addAttribute("prevPage", startPage - 1);  // 이전 페이지 시작
+        model.addAttribute("nextPage", endPage + 1);  // 다음 페이지 시작
+        model.addAttribute("hasPrev", startPage > 1);  // 이전 페이지가 있는지 확인
+        model.addAttribute("hasNext", endPage < totalPages);  // 다음 페이지가 있는지 확인
+
         return "board/list";
     }
     
@@ -47,6 +73,7 @@ public class BoardController {
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         model.addAttribute("board", boardService.getBoard(id));
+        model.addAttribute("files",fileService.getFilesByBoardId(id));
         return "board/detail";
     }
     
@@ -72,11 +99,11 @@ public class BoardController {
     @PostMapping("/insert")
     public String insert(Board board, @RequestParam("files") List<MultipartFile> files ) {
         try {
+            Long boardId = boardService.saveBoard(board);
             // 게시글 저장
-            boardService.saveBoard(board);
-
+            //boardService.saveBoard(board);
             // 파일 저장
-            fileService.saveFiles(board.getId(), files);
+            fileService.saveFiles(boardId, files);
 
             return "redirect:/board/list";
         } catch (Exception e) {
@@ -111,4 +138,5 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

@@ -1,19 +1,88 @@
 package com.board.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.board.domain.Email;
+import com.board.mapper.EmailMapper;
+import jakarta.annotation.PostConstruct;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String senderEmail;
 
+    @Value("${spring.mail.password}")
+    private String mailPassword;
+
+    private final JavaMailSender mailSender;
+    private final EmailMapper emailMapper;
+
+
+    @PostConstruct
+    public void init(){
+        log.info("Mail username: {}", senderEmail);
+        log.info("Mail password length : {}", mailPassword.length());
+
+    }
+    @Transactional
+    public void sendEmail(Email email){
+       log.info("Start sending email to: {}", email.getReceiver());
+
+        if (email.getReceiver() == null || email.getReceiver().trim().isEmpty()) {
+            throw new IllegalArgumentException("받는 사람의 이메일 주소가 필요합니다.");
+        }
+
+        email.setSender(senderEmail);
+        email.setStatus("SENDING");
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(email.getSender());
+            helper.setTo(email.getReceiver());  // 받는 사람 설정
+            helper.setSubject(email.getSubject());
+            helper.setText(email.getContent(), true);
+
+            log.info("Email configuration completed. Attempting to send...");
+            mailSender.send(message);
+            log.info("Email sent successfully");
+
+            email.setStatus("SENT");
+
+        } catch (Exception e) {
+            log.error("Failed to send email", e);
+            email.setStatus("FAILED");
+            throw new RuntimeException("이메일 전송에 실패했습니다: " + e.getMessage(), e);
+        } finally {
+            emailMapper.save(email);
+        }
+
+
+    }
+
+
+    public List<Email> getEmailList(){
+        return emailMapper.findAll();
+
+    }
+
+    public Email getEmail(Long id){
+        return emailMapper.findById(id);
+
+    }
+    /*
     public void sendEmail(String to, String subject, String text) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -63,5 +132,7 @@ public class EmailService {
             "</div>";
 
         sendEmail(to, subject, htmlContent);
-    }
+    }*/
+
+
 }
