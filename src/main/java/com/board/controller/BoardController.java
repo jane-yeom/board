@@ -1,9 +1,12 @@
 package com.board.controller;
 
 import com.board.domain.Board;
+import com.board.domain.Comment;
 import com.board.domain.FileAttachment;
 import com.board.service.BoardService;
+import com.board.service.CommentService;
 import com.board.service.FileService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -30,6 +33,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final FileService fileService;
+    private final CommentService commentService;
 
     @Value("${file.upload.path}")
     private String uploadPath;
@@ -71,9 +75,14 @@ public class BoardController {
     }
     
     @GetMapping("/{id}")
-    public String detail(@PathVariable Long id, Model model) {
-        model.addAttribute("board", boardService.getBoard(id));
+    public String detail(@PathVariable Long id, Model model, HttpSession session) {
+        Board board = boardService.getBoard(id);
+        List<Comment> comments = commentService.getComments(id);
+        String username = (String)session.getAttribute("username");
+        model.addAttribute("board", board);
         model.addAttribute("files",fileService.getFilesByBoardId(id));
+        model.addAttribute("comments", comments);
+        model.addAttribute("username", username);
         return "board/detail";
     }
     

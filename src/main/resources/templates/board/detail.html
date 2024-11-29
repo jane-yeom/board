@@ -67,6 +67,38 @@
                 </form>
                 <a href="/board/list" class="btn btn-secondary">목록</a>
             </div>
+
+            <form action="/comment/add" method="post" class="mb-4">
+                <input type="hidden" name="boardId" value="{{board.id}}">
+                <div class="mb-3">
+                    <textarea class="form-control" name="content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">댓글 작성성</button>
+           </form>
+
+            {{#comments}}
+            <div class="border-bottom pb-3 mb-3">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{writer}}</strong>
+                        <small class="text-muted ms-2">{{createdAt}}</small>
+                    </div>
+                    {{#writer}}
+                        {{#username}}
+                            {{#eq writer username}}
+                            <form action="/comment/delete/{{id}}" method="post" style="display: inline;">
+                                <input type="hidden" name="boardId" value="{{boardId}}">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+                            </form>
+                            {{/eq}}
+                        {{/username}}
+                    {{/writer}}
+                </div>
+                <p class="mt-2 mb-0">{{content}}</p>
+            </div>
+            {{/comments}}
+            {{^comments}}
+            <p class="text-center text-muted">등록된 댓글이 없습니다.</p>
         </div>
     </div>
 </div>
